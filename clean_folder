@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+# encoding: utf-8
+# vim: ts=4:sw=4:expandtab:
+
+import sys
+import os
+import argparse
+
+def walksub(path, args):
+    if not os.path.isdir(path):
+        print("not a directory, '{}'".format(path))
+        return False
+
+    isEmpty = True
+
+    entries = os.listdir(path)
+
+    if args.verbose:
+        print("path = {}, entries = {}".format(path, entries))
+
+    if(len(entries) > 0):
+        for entry in entries:
+            if not os.path.isdir(os.path.join(path, entry)):
+                if args.verbose: print ("not a directory (not empty), {}".format(os.path.join(path, entry)))
+                isEmpty = False
+            else:
+                if walksub(os.path.join(path, entry), args):
+                    print("deleting empty folder {}".format(os.path.join(path, entry)))
+                    if not args.dryrun: os.rmdir(os.path.join(path, entry))
+                    else: print("DELETE {}".format(os.path.join(path, entry)))
+    if not isEmpty: print("'{}' contains files".format(path)) 
+    return isEmpty
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('--dryrun', action='store_true')
+    parser.add_argument('paths', nargs='+')
+    args = parser.parse_args()
+
+    if args.verbose:
+        print("args = {}".format(args))
+
+    for path in args.paths:
+        if walksub(path, args):
+            print("'{}' is clean (contains no empty folder(s))".format(path))
+
+
+if __name__ == '__main__':
+    sys.exit(main())

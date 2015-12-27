@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+mkdir -p ./kalle/level1/level2a/level3
+mkdir -p ./kalle/level1/level2b/level3
+mkdir -p ./benny/level1/level2/level3
+mkdir -p ./benny/level1b/level2/level3
+touch ./benny/level1/README
